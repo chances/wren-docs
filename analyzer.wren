@@ -1,6 +1,7 @@
 /// Authors: Chance Snow <git@chancesnow.me>
 /// Copyright: Copyright © 2024 Chance Snow
 /// License: MIT License
+import "./wren_modules/wrenalyzer/ast" for Module
 import "./wren_modules/wrenalyzer/lexer" for Lexer
 import "./wren_modules/wrenalyzer/parser" for Parser
 import "./wren_modules/wrenalyzer/reporter" for PrettyReporter
@@ -10,6 +11,7 @@ class Analyzer {
   /// Params:
   ///   path: String
   ///   code: String
+  /// Returns: Module
   static parse(path, code) {
     __reporter = __reporter == null ? PrettyReporter.new() : __reporter
 

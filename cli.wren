@@ -54,7 +54,7 @@ var sources = Directory.list(cwd).where {|entry|
   return entry.endsWith(".wren") && File.exists(entry)
 }.map {|entry|
   var path = Path.join([cwd, entry])
-  Analyzer.parse(path, File.read(path))
+  return Analyzer.parse(path, File.read(path))
 }.toList
 // TODO: Read all *.wren files, parse symbols and neighboring comments, emit docs
 
