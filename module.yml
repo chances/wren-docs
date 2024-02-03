@@ -3,7 +3,7 @@ version: 0.1.0
 description: Documentation generator for Wren
 author: Chance Snow <git@chancesnow.me>
 license: MIT
-entry: module.wren
+index: 
 cli: cli.wren
 tests: src/**/*.spec.wren
 dependencies: [wren-args, wren-colors, wren-path]
