@@ -13,10 +13,9 @@
 /// - The D programming language's [documentation generator](https://dlang.org/spec/ddoc.html) (AKA DDoc).
 /// - The Domepunk [documentation generator](https://github.com/NinjasCL/domepunk/blob/main/tools/docs/__main__.py).
 ///
-/// Authors: Chance Snow
+/// Authors: Chance Snow <git@chancesnow.me>
 /// Copyright: Copyright © 2024 Chance Snow
 /// License: MIT License
-/// See Also: https://github.com/chances/descartes-d
 import "io" for File, Directory, Stdin, Stderr
 import "os" for Process
 
