@@ -19,10 +19,12 @@
 import "io" for File, Directory, Stdin, Stderr
 import "os" for Process
 
+import "./analyzer" for Analyzer
 import "./ensure" for Ensure
 import "./wren_modules/wren-path/Path" for Path
 import "./wren_modules/wren-args/args" for Args
 
+var cwd = Process.cwd
 var args = Args.parse(Process.arguments)
 var flags = args[0]
 var params = args[1]
@@ -42,12 +44,17 @@ if (flags["help"] || flags["h"]) {
 // Bail if the user only wanted the version
 if (flags["version"]) Process.exit()
 
-// Create and switch to the docs directory
 Ensure.exec("mkdir", ["-p", "docs"])
-var cwd = Process.cwd
-Process.chdir(Path.join([cwd, "docs"]))
+// Create index of generated documentation
+Ensure.exec("touch", [Path.join([cwd, "docs", "index.json"])])
 
-// Create 
-Ensure.exec("touch", ["index.json"])
+// Find Wren sources
+// TODO: Recursivly search for sources, ignoring "wren_modules" directories
+var sources = Directory.list(cwd).where {|entry|
+  return entry.endsWith(".wren") && File.exists(entry)
+}.map {|entry|
+  var path = Path.join([cwd, entry])
+  Analyzer.parse(path, File.read(path))
+}.toList
 // TODO: Read all *.wren files, parse symbols and neighboring comments, emit docs
 
