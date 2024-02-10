@@ -50,11 +50,13 @@ Ensure.exec("touch", [Path.join([cwd, "docs", "index.json"])])
 
 // Find Wren sources
 // TODO: Recursivly search for sources, ignoring "wren_modules" directories
-var sources = Directory.list(cwd).where {|entry|
+var sources = {}
+Directory.list(cwd).where {|entry|
   return entry.endsWith(".wren") && File.exists(entry)
-}.map {|entry|
+}.each {|entry|
   var path = Path.join([cwd, entry])
-  return Analyzer.parse(path, File.read(path))
-}.toList
+  sources[path] = Analyzer.parse(path, File.read(path))
+}
+System.print("Parsed %(sources.keys.count) modules")
 // TODO: Read all *.wren files, parse symbols and neighboring comments, emit docs
-
+// NOTE: "There is a convention that methods ending in "_" are private." See https://github.com/wren-lang/wren/issues/117 and https://github.com/wren-lang/wren/issues/498#issuecomment-376209364
