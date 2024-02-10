@@ -13,17 +13,18 @@
 /// - The D programming language's [documentation generator](https://dlang.org/spec/ddoc.html) (AKA DDoc).
 /// - The Domepunk [documentation generator](https://github.com/NinjasCL/domepunk/blob/main/tools/docs/__main__.py).
 ///
-/// Authors: Chance Snow
+/// Authors: Chance Snow <git@chancesnow.me>
 /// Copyright: Copyright © 2024 Chance Snow
 /// License: MIT License
-/// See Also: https://github.com/chances/descartes-d
 import "io" for File, Directory, Stdin, Stderr
 import "os" for Process
 
+import "./analyzer" for Analyzer
 import "./ensure" for Ensure
 import "./wren_modules/wren-path/Path" for Path
 import "./wren_modules/wren-args/args" for Args
 
+var cwd = Process.cwd
 var args = Args.parse(Process.arguments)
 var flags = args[0]
 var params = args[1]
@@ -43,12 +44,19 @@ if (flags["help"] || flags["h"]) {
 // Bail if the user only wanted the version
 if (flags["version"]) Process.exit()
 
-// Create and switch to the docs directory
 Ensure.exec("mkdir", ["-p", "docs"])
-var cwd = Process.cwd
-Process.chdir(Path.join([cwd, "docs"]))
+// Create index of generated documentation
+Ensure.exec("touch", [Path.join([cwd, "docs", "index.json"])])
 
-// Create 
-Ensure.exec("touch", ["index.json"])
+// Find Wren sources
+// TODO: Recursivly search for sources, ignoring "wren_modules" directories
+var sources = {}
+Directory.list(cwd).where {|entry|
+  return entry.endsWith(".wren") && File.exists(entry)
+}.each {|entry|
+  var path = Path.join([cwd, entry])
+  sources[path] = Analyzer.parse(path, File.read(path))
+}
+System.print("Parsed %(sources.keys.count) modules")
 // TODO: Read all *.wren files, parse symbols and neighboring comments, emit docs
-
+// NOTE: "There is a convention that methods ending in "_" are private." See https://github.com/wren-lang/wren/issues/117 and https://github.com/wren-lang/wren/issues/498#issuecomment-376209364
